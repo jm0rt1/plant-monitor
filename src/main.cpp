@@ -7,7 +7,6 @@ SerialInterface *si = new SerialInterface();
 int redPin = 3;
 int greenPin = 6;
 int bluePin = 5;
-int soil_pin = A0; // AOUT pin on sensor
 
 void setColor(int redValue, int greenValue, int blueValue)
 {
@@ -28,25 +27,16 @@ void setup()
 
 void loop()
 {
-  // si->readCommand();
-  // setColor(0, 0, 255);
-  // delay(1000);
-  // setColor(0, 255, 0);
-  // delay(1000);
-  // setColor(255, 0, 0);
-  // delay(1000);
+  si->readCommand();
+  float soilVoltage = readSensorVoltage(10);
+  if (soilVoltage < 2)
+  {
+    setColor(0, 0, 100);
+  }
+  else if (soilVoltage > 2)
+  {
+    setColor(171, 20, 7);
+  }
 
   delay(100); // slight delay between readings
-}
-
-// put function definitions here:
-int myFunction(int x, int y)
-{
-}
-
-float readSensorVoltage()
-{
-  Serial.print("Soil Moisture Sensor Voltage: ");
-  Serial.print((float(analogRead(soil_pin)) / 1023.0) * 5); // read sensor
-  Serial.println(" V");
 }

@@ -1,6 +1,6 @@
 #include <dht.h>
 #include <DHT_U.h>
-
+float readSensorVoltage(int averages);
 enum UnitsTemperatures
 {
     C = 0,
@@ -15,6 +15,7 @@ public:
     void onOn();
     void onOff();
     void onGetData();
+    void onAllSensors();
 
 private:
     DHT *mDht;

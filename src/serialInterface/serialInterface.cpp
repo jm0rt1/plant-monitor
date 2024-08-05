@@ -1,5 +1,20 @@
 #include "serialInterface.h"
 #include <Arduino.h>
+int soil_pin = A0; // AOUT pin on sensor
+
+float readSensorVoltage(int averages)
+{
+    float sample;
+    float filteredResult = 0;
+    for (int i = 0; i < averages; i++)
+    {
+        sample = float(analogRead(soil_pin) / 1024.0 * 3.3); // read sensor
+        filteredResult += sample;
+        delay(10);
+    }
+    return filteredResult / averages;
+}
+
 String SerialInterface::printTemperature(UnitsTemperatures unit)
 {
     float temp = -1000.0;
@@ -57,6 +72,10 @@ void SerialInterface::readCommand()
     {
         printTemperature(UnitsTemperatures::C);
     }
+    else if (cmd == "all sensors")
+    {
+        onAllSensors();
+    }
     else if (cmd == "")
     {
         return;
@@ -65,4 +84,24 @@ void SerialInterface::readCommand()
     {
         Serial.print("NAK: CMD Not Accepted\n");
     }
+}
+
+void SerialInterface::onGetData()
+{
+}
+
+void SerialInterface::onAllSensors()
+{
+    float temp_c = -1000.0;
+    float temp_f = -1000.0;
+    float humidity = -1000.0;
+    float soilVoltage = -1000.0;
+
+    temp_c = mDht->readTemperature(true);
+    temp_f = mDht->readTemperature(false);
+    humidity = mDht->readHumidity();
+    soilVoltage = readSensorVoltage(10);
+
+    String outString = String(temp_c) + "," + String(temp_f) + "," + String(humidity) + "," + String(soilVoltage) + "\n";
+    Serial.print(outString);
 }
