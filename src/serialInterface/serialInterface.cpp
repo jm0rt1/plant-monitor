@@ -6,13 +6,16 @@ float readSensorVoltage(int averages)
 {
     float sample;
     float filteredResult = 0;
+    float raw;
     for (int i = 0; i < averages; i++)
     {
-        sample = float(analogRead(soil_pin) / 1024.0 * 3.3); // read sensor
+        raw = analogRead(soil_pin);
+        sample = raw / 1024.0 * 3.3; // read sensor
         filteredResult += sample;
         delay(10);
     }
-    return filteredResult / averages;
+    float result = filteredResult / averages;
+    return result;
 }
 
 String SerialInterface::printTemperature(UnitsTemperatures unit)
@@ -76,6 +79,13 @@ void SerialInterface::readCommand()
     {
         onAllSensors();
     }
+    else if (cmd == "percent")
+    {
+        Serial.print("Setting: ");
+        String setting = Serial.readStringUntil('\n');
+        float val = setting.toFloat();
+        setLightPercent(val);
+    }
     else if (cmd == "")
     {
         return;
@@ -104,4 +114,14 @@ void SerialInterface::onAllSensors()
 
     String outString = String(temp_c) + "," + String(temp_f) + "," + String(humidity) + "," + String(soilVoltage) + "\n";
     Serial.print(outString);
+}
+
+void SerialInterface::setLightPercent(float val)
+{
+    mLightPercent = val;
+}
+
+float SerialInterface::getLightPercent()
+{
+    return mLightPercent;
 }

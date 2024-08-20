@@ -16,7 +16,10 @@ public:
     void onOff();
     void onGetData();
     void onAllSensors();
+    void setLightPercent(float val);
+    float getLightPercent();
 
 private:
     DHT *mDht;
+    float mLightPercent = 50.0;
 };
