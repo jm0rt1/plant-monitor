@@ -4,6 +4,7 @@
 
 void handleRoot();
 
+void handleSensor();
 // Create an instance of the server on port 80
 WebServer server(80);
 
@@ -34,6 +35,8 @@ void setup()
     // Define routing
     server.on("/", handleRoot);
 
+    server.on("/sensor", handleSensor);
+
     // Start the server
     server.begin();
     Serial.println("HTTP server started");
@@ -48,7 +51,22 @@ void loop()
 void handleRoot()
 {
     // Read sensor data
-    int sensorValue = analogRead(sensorPin);
+    int sensorValue = random();
+    Serial.print("Sensor Value: ");
+    Serial.println(sensorValue);
+
+    // Create HTTP response
+    String response = "Sensor Value: " + String(sensorValue);
+
+    // Send response
+    server.send(200, "text/plain", response);
+}
+
+void handleSensor()
+{
+    // Read sensor data
+    static int sensorValue = 1;
+    sensorValue++;
     Serial.print("Sensor Value: ");
     Serial.println(sensorValue);
 
